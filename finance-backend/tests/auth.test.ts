@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import { Role } from '@prisma/client';
 import { authMiddleware } from '../src/middleware/auth.middleware';
 import { signToken } from '../src/utils/jwt';

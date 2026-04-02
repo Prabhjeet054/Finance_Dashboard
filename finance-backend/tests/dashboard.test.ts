@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import dashboardRoutes from '../src/modules/dashboard/dashboard.routes';
 
 describe('dashboard routes', () => {

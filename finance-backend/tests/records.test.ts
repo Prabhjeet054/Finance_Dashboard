@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import recordRoutes from '../src/modules/records/record.routes';
 
 describe('record routes', () => {

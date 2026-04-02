@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import { Role } from '@prisma/client';
 import { requireRole } from '../src/middleware/role.guard';
 
