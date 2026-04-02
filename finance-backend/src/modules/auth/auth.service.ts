@@ -1,21 +1,44 @@
 import bcrypt from 'bcryptjs';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, Role, Status, User } from '@prisma/client';
 import prisma from '../../config/database';
+import { generateUserSlug } from '../../utils/slug';
 import { signToken } from '../../utils/jwt';
+import type { RegisterInput } from './auth.schema';
 
-export type LoginResult = {
+const SALT_ROUNDS = 10;
+
+export type SafeUser = Omit<User, 'passwordHash'>;
+
+export type AuthResult = {
+	user: SafeUser;
 	token: string;
-	user: {
-		id: string;
-		name: string;
-		email: string;
-		role: string;
-		status: string;
-		slug: string;
-	};
 };
 
-export async function loginWithEmailAndPassword(email: string, password: string): Promise<LoginResult> {
+export async function register(data: RegisterInput): Promise<SafeUser> {
+	const passwordHash = await bcrypt.hash(data.password, SALT_ROUNDS);
+
+	try {
+		const createdUser = await prisma.user.create({
+			data: {
+				name: data.name,
+				email: data.email,
+				passwordHash,
+				slug: generateUserSlug(data.name),
+				role: Role.VIEWER,
+			},
+		});
+
+		return toSafeUser(createdUser);
+	} catch (error) {
+		if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+			throw new Error('Email is already registered');
+		}
+
+		throw error;
+	}
+}
+
+export async function login(email: string, password: string): Promise<AuthResult> {
 	const user = await prisma.user.findUnique({
 		where: { email },
 	});
@@ -30,19 +53,18 @@ export async function loginWithEmailAndPassword(email: string, password: string)
 		throw new Error('Invalid credentials');
 	}
 
+	if (user.status === Status.INACTIVE) {
+		throw new Error('User account is inactive');
+	}
+
 	return {
 		token: signToken({ userId: user.id, role: user.role }),
-		user: mapUser(user),
+		user: toSafeUser(user),
 	};
 }
 
-function mapUser(user: User): LoginResult['user'] {
-	return {
-		id: user.id,
-		name: user.name,
-		email: user.email,
-		role: user.role,
-		status: user.status,
-		slug: user.slug,
-	};
+function toSafeUser(user: User): SafeUser {
+	const { passwordHash: _passwordHash, ...safeUser } = user;
+
+	return safeUser;
 }
