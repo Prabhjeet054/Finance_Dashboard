@@ -1,20 +1,22 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { RequestHandler } from 'express';
+import { Role } from '@prisma/client';
 
-type AuthenticatedRequest = Request & {
+type AuthenticatedRequest = {
 	user?: {
 		id: string;
-		role: string;
+		role: Role;
 	};
 };
 
-export function requireRole(...allowedRoles: string[]) {
-	return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
-		const userRole = req.user?.role;
+export function requireRole(...roles: Role[]): RequestHandler {
+	return (req, res, next): void => {
+		const authenticatedRequest = req as typeof req & AuthenticatedRequest;
+		const userRole = authenticatedRequest.user?.role;
 
-		if (!userRole || !allowedRoles.includes(userRole)) {
+		if (!userRole || !roles.includes(userRole)) {
 			res.status(403).json({
 				success: false,
-				message: 'Forbidden',
+				message: 'Forbidden: insufficient permissions',
 			});
 			return;
 		}

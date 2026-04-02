@@ -1,10 +1,11 @@
 import type { NextFunction, Request, Response } from 'express';
+import { Role } from '@prisma/client';
 import { verifyToken } from '../utils/jwt';
 
 type AuthenticatedRequest = Request & {
 	user?: {
 		id: string;
-		role: string;
+		role: Role;
 	};
 };
 
@@ -23,7 +24,7 @@ export function authMiddleware(req: AuthenticatedRequest, res: Response, next: N
 		const userId = payload.userId;
 		const role = payload.role;
 
-		if (typeof userId !== 'string' || typeof role !== 'string') {
+		if (typeof userId !== 'string' || (role !== Role.ADMIN && role !== Role.ANALYST && role !== Role.VIEWER)) {
 			res.status(401).json({ success: false, message: 'Unauthorized' });
 			return;
 		}
