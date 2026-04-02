@@ -12,7 +12,6 @@ const config: Config = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  setupFilesAfterFramework: [],
   verbose: true,
   forceExit: true,
   clearMocks: true,
