@@ -27,9 +27,9 @@ Role-based access control tests with three pre-seeded users (VIEWER, ANALYST, AD
 ## Running Tests
 
 ### Prerequisites
-Ensure you have a running PostgreSQL database or SQLite.
+Ensure you have a running PostgreSQL database.
 
-### Option 1: Using PostgreSQL (Production Database)
+### PostgreSQL Configuration
 ```bash
 # Add to .env or set environment variables
 DATABASE_URL="postgresql://postgres:password@localhost:5432/finance_db"
@@ -44,24 +44,6 @@ npm run test:watch
 
 # Run with coverage
 npm run test:coverage
-```
-
-### Option 2: Using SQLite (Simple Testing)
-```bash
-# Set DATABASE_URL to point to a SQLite file
-export DATABASE_URL="file:./test.db"
-export JWT_SECRET="test_secret"
-
-npm test
-```
-
-### Option 3: Using In-Memory SQLite
-```bash
-# Set DATABASE_URL to in-memory SQLite
-export DATABASE_URL="file::memory:?cache=shared"
-export JWT_SECRET="test_secret"
-
-npm test
 ```
 
 ## Test Database Reset
@@ -89,10 +71,7 @@ Jest setup file that:
 ## Troubleshooting
 
 ### "Can't reach database server" Error
-**Solution:** Ensure PostgreSQL is running and DATABASE_URL is correct, or switch to SQLite by setting:
-```bash
-export DATABASE_URL="file:./test.db"
-```
+**Solution:** Ensure PostgreSQL is running and both DATABASE_URL and TEST_DATABASE_URL are correct.
 
 ### Tests Timeout
 **Solution:** Increase Jest timeout in jest.config.ts:
