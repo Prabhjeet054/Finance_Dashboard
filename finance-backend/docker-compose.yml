@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: finance-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: finance_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - finance_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d finance_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: finance-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/finance_db?schema=public
+      JWT_SECRET: change_this_to_a_long_secret
+      JWT_EXPIRES_IN: 7d
+      BCRYPT_SALT_ROUNDS: 10
+    ports:
+      - "5001:5000"
+
+volumes:
+  finance_postgres_data:

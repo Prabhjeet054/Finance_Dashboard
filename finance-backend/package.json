@@ -2,11 +2,11 @@
   "name": "finance-backend",
   "version": "1.0.0",
   "description": "Finance Data Processing and Access Control Backend",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
-    "start": "prisma db push && node dist/server.js",
+    "start": "prisma db push && node dist/src/server.js",
     "postinstall": "prisma generate && npm run build",
     "test": "jest",
     "test:watch": "jest --watch",
