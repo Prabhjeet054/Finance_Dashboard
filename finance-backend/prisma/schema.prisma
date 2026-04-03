@@ -1,3 +1,5 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -15,7 +17,6 @@ model User {
   passwordHash String   @db.Text
   role         Role     @default(VIEWER)
   status       Status   @default(ACTIVE)
-  // Slug should be generated in application logic from name before create/update.
   slug         String   @unique @db.VarChar(150)
   createdAt    DateTime @default(now()) @db.Timestamptz
   updatedAt    DateTime @updatedAt @db.Timestamptz
