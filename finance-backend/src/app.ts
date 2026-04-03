@@ -7,6 +7,7 @@ import authRoutes from './modules/auth/auth.routes';
 import dashboardRoutes from './modules/dashboard/dashboard.routes';
 import recordRoutes from './modules/records/record.routes';
 import userRoutes from './modules/users/user.routes';
+import { notFoundHandler, globalErrorHandler } from './middleware/error.middleware';
 
 const app = express();
 
@@ -28,13 +29,10 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/records', recordRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 
-app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-	const message = err instanceof Error ? err.message : 'Internal Server Error';
+// 404 handler - must be registered before global error handler
+app.use(notFoundHandler);
 
-	res.status(500).json({
-		success: false,
-		message,
-	});
-});
+// Global error handler - must be registered last
+app.use(globalErrorHandler);
 
 export default app;
