@@ -1,5 +1,5 @@
 import cors from 'cors';
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -10,6 +10,9 @@ import userRoutes from './modules/users/user.routes';
 import { notFoundHandler, globalErrorHandler } from './middleware/error.middleware';
 
 const app = express();
+
+// Required on Railway and other reverse proxies for correct IP/rate-limit behavior.
+app.set('trust proxy', 1);
 
 app.use(helmet());
 app.use(cors());

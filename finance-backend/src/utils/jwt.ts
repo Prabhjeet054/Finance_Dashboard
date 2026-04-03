@@ -1,17 +1,13 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET;
+import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken';
+import { env } from '../config/env';
 
 function getJwtSecret(): string {
-	if (!JWT_SECRET) {
-		throw new Error('JWT_SECRET is not configured');
-	}
-
-	return JWT_SECRET;
+	return env.JWT_SECRET;
 }
 
 export function signToken(payload: { userId: string; role: string }): string {
-	return jwt.sign(payload, getJwtSecret(), { expiresIn: '7d' });
+	const expiresIn = env.JWT_EXPIRES_IN as SignOptions['expiresIn'];
+	return jwt.sign(payload, getJwtSecret(), { expiresIn });
 }
 
 export function verifyToken(token: string): JwtPayload {
