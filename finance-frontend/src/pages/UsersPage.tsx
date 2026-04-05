@@ -97,7 +97,6 @@ export function UsersPage() {
           >
             <option value="VIEWER">VIEWER</option>
             <option value="ANALYST">ANALYST</option>
-            <option value="ADMIN">ADMIN</option>
           </select>
         </label>
         <div className="flex items-end">

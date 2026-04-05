@@ -4,6 +4,7 @@ import { SummaryCards } from '../components/dashboard/SummaryCards';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
 import { apiRequest } from '../lib/api';
+import { formatINR } from '../lib/currency';
 import type { CategoryBreakdown, RecentItem, Summary, Trend } from '../types';
 
 export function DashboardPage() {
@@ -65,7 +66,7 @@ export function DashboardPage() {
                   </p>
                 </div>
                 <span className={`text-sm font-semibold ${item.type === 'INCOME' ? 'text-emerald-700' : 'text-rose-700'}`}>
-                  {item.type} ${Number(item.amount).toLocaleString()}
+                  {item.type} {formatINR(Number(item.amount))}
                 </span>
               </li>
             ))}
@@ -79,7 +80,7 @@ export function DashboardPage() {
                 <li key={c.category} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-sm">
                   <span>{c.category}</span>
                   <span className="font-semibold text-slate-700">
-                    ${c.totalAmount.toLocaleString()} ({c.count})
+                    {formatINR(c.totalAmount)} ({c.count})
                   </span>
                 </li>
               ))}

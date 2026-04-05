@@ -1,4 +1,5 @@
 import type { RecordItem, RecordResult, Role } from '../../types';
+import { formatINR } from '../../lib/currency';
 import { Button } from '../ui/Button';
 
 type Props = {
@@ -38,7 +39,7 @@ export function RecordsTable({ records, role, onDelete, onPrev, onNext }: Props)
                     {record.type}
                   </span>
                 </td>
-                <td className="px-3 py-2 font-medium text-slate-900">${Number(record.amount).toLocaleString()}</td>
+                <td className="px-3 py-2 font-medium text-slate-900">{formatINR(Number(record.amount))}</td>
                 <td className="px-3 py-2 text-xs text-slate-500">{record.slug}</td>
                 <td className="px-3 py-2">
                   {role === 'ADMIN' ? (
