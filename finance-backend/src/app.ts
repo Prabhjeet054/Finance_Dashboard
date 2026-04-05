@@ -16,7 +16,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 const allowedOrigins = env.FRONTEND_ORIGIN.split(',')
-	.map((origin) => origin.trim())
+	.map((origin) => origin.trim().replace(/\/$/, ''))
 	.filter(Boolean);
 
 app.use(helmet());
@@ -28,7 +28,9 @@ app.use(
 				return callback(null, true);
 			}
 
-			if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+			const normalizedOrigin = origin.replace(/\/$/, '');
+
+			if (allowedOrigins.includes('*') || allowedOrigins.includes(normalizedOrigin)) {
 				return callback(null, true);
 			}
 
