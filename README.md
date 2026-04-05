@@ -207,7 +207,7 @@ Common response shape:
 - Success: `success`, `data`, `timestamp`
 - Error: `success`, `message`, optional `errors`, `timestamp`
 
-## 12. Security and Operational Features
+## 13. Security and Operational Features
 
 - JWT bearer token authentication
 - Role guard middleware for route level authorization
@@ -216,7 +216,7 @@ Common response shape:
 - Express rate limiting (100 requests per 15 minutes)
 - Password hashing using bcrypt
 
-## 13. Assumptions
+## 14. Assumptions
 
 - PostgreSQL is the required database engine
 - Frontend and backend are run separately in local development
@@ -224,7 +224,7 @@ Common response shape:
 - User deletion in this project means account deactivation
 - Record deletion is soft delete and records remain in database history
 
-## 14. Tradeoffs Considered
+## 15. Tradeoffs Considered
 
 - Chose JWT stateless auth over server sessions for simpler scaling and API integration
 - Implemented route level role guards for clarity and maintainability
@@ -233,13 +233,13 @@ Common response shape:
 - Search is implemented on core text fields (`category`, `notes`, `slug`) for practical performance and simplicity
 - Test suite currently expects a reachable local test PostgreSQL database for integration tests
 
-## 15. Known Development Notes
+## 16. Known Development Notes
 
 - `finance-frontend/.env` and `finance-backend/.env` are intentionally ignored by git
 - `.env.example` files are tracked and should be used as templates
 - Integration tests require `TEST_DATABASE_URL` to point to a running PostgreSQL instance
 
-## 16. Quick Verification Checklist
+## 17. Quick Verification Checklist
 
 1. Backend starts on configured port
 2. Frontend points to backend API base URL
