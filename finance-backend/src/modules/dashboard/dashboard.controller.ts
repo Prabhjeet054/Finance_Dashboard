@@ -32,11 +32,7 @@ export const getCategoryBreakdownHandler: RequestHandler = async (req, res) => {
 
 export const getMonthlyTrendsHandler: RequestHandler = async (req, res) => {
 	try {
-		const year = req.query.year ? parseInt(req.query.year as string, 10) : new Date().getFullYear();
-
-		if (isNaN(year) || year < 1900 || year > 2100) {
-			return sendError(res, 'Invalid year parameter', 400);
-		}
+		const year = req.query.year ? Number(req.query.year) : new Date().getFullYear();
 
 		const trends = await dashboardService.getMonthlyTrends(year);
 		sendSuccess(res, trends, 200);
@@ -48,11 +44,7 @@ export const getMonthlyTrendsHandler: RequestHandler = async (req, res) => {
 
 export const getRecentActivityHandler: RequestHandler = async (req, res) => {
 	try {
-		const limit = req.query.limit ? Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10))) : 10;
-
-		if (isNaN(limit)) {
-			return sendError(res, 'Invalid limit parameter', 400);
-		}
+		const limit = req.query.limit ? Number(req.query.limit) : 10;
 
 		const activity = await dashboardService.getRecentActivity(limit);
 		sendSuccess(res, activity, 200);

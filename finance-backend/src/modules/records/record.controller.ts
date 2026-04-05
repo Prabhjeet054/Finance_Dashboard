@@ -1,7 +1,6 @@
 import { Role } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { sendError, sendSuccess } from '../../utils/response';
-import { filterRecordSchema } from './record.schema';
 import * as recordService from './record.service';
 
 type AuthenticatedRequest = Request & {
@@ -19,18 +18,8 @@ export async function getAll(req: Request, res: Response): Promise<void> {
 		return;
 	}
 
-	const parsed = filterRecordSchema.safeParse(req.query);
-
-	if (!parsed.success) {
-		res.status(422).json({
-			success: false,
-			errors: parsed.error.flatten().fieldErrors,
-		});
-		return;
-	}
-
 	try {
-		const result = await recordService.getAll(authReq.user.id, authReq.user.role, parsed.data);
+		const result = await recordService.getAll(authReq.user.id, authReq.user.role, req.query);
 		sendSuccess(res, result);
 	} catch {
 		sendError(res, 'Failed to fetch records', 500);

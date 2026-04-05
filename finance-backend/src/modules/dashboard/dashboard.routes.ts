@@ -2,12 +2,14 @@ import { Router } from 'express';
 import { Role } from '@prisma/client';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { requireRole } from '../../middleware/role.guard';
+import { validateQuery } from '../../middleware/validate.middleware';
 import {
 	getSummaryHandler,
 	getCategoryBreakdownHandler,
 	getMonthlyTrendsHandler,
 	getRecentActivityHandler,
 } from './dashboard.controller';
+import { monthlyTrendsQuerySchema, recentActivityQuerySchema } from './dashboard.schema';
 
 const router = Router();
 
@@ -21,9 +23,9 @@ router.get('/summary', requireRole(Role.ADMIN, Role.ANALYST), getSummaryHandler)
 router.get('/categories', requireRole(Role.ADMIN, Role.ANALYST), getCategoryBreakdownHandler);
 
 // GET /api/v1/dashboard/trends?year=YYYY - ADMIN, ANALYST only
-router.get('/trends', requireRole(Role.ADMIN, Role.ANALYST), getMonthlyTrendsHandler);
+router.get('/trends', requireRole(Role.ADMIN, Role.ANALYST), validateQuery(monthlyTrendsQuerySchema), getMonthlyTrendsHandler);
 
 // GET /api/v1/dashboard/recent - ADMIN, ANALYST, VIEWER
-router.get('/recent', requireRole(Role.ADMIN, Role.ANALYST, Role.VIEWER), getRecentActivityHandler);
+router.get('/recent', requireRole(Role.ADMIN, Role.ANALYST, Role.VIEWER), validateQuery(recentActivityQuerySchema), getRecentActivityHandler);
 
 export default router;
