@@ -19,11 +19,13 @@ const allowedOrigins = env.FRONTEND_ORIGIN.split(',')
 	.map((origin) => origin.trim().replace(/\/$/, ''))
 	.filter(Boolean);
 
+console.log('Allowed CORS origins:', allowedOrigins);
+
 app.use(helmet());
 app.use(
 	cors({
-		origin: (origin, callback) => {
-			// Allow non-browser clients and same-origin requests with no Origin header.
+		origin: function (origin, callback) {
+			// Allow requests with no origin (like mobile apps or curl requests)
 			if (!origin) {
 				return callback(null, true);
 			}
@@ -34,8 +36,12 @@ app.use(
 				return callback(null, true);
 			}
 
-			return callback(new Error('CORS origin is not allowed'));
+			console.warn(`CORS blocked origin: ${origin}`);
+			return callback(new Error('CORS not allowed'));
 		},
+		credentials: true,
+		methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+		allowedHeaders: ['Content-Type', 'Authorization'],
 	})
 );
 app.use(express.json());
