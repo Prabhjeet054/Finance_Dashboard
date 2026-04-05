@@ -12,14 +12,23 @@ It includes:
 - Dashboard analytics endpoints
 - Seeded demo data for quick testing
 
-## 2. Repository Structure
+## 2. Quick Start with Demo Credentials
+
+Once the application is running, login with this pre-seeded admin account:
+
+- **Email:** `admin@gmail.com`
+- **Password:** `admintester1234`
+
+This admin account has full access to records and user management after you run `npm run db:seed` in the backend.
+
+## 3. Repository Structure
 
 - `finance-backend` : API server, database schema, seed script, tests
 - `finance-frontend` : React client application
 - `start.sh` : backend start script used by deployment
 - `railway.toml` : Railway build and deploy config
 
-## 3. Roles and Access Model
+## 4. Roles and Access Model
 
 ### Viewer
 - Can view recent dashboard activity
@@ -38,7 +47,7 @@ It includes:
 - Can manage users
 - Can create Viewer and Analyst accounts from user management
 
-## 4. Tech Stack
+## 5. Tech Stack
 
 ### Backend
 - Node.js
@@ -57,13 +66,13 @@ It includes:
 - React Router
 - Tailwind CSS
 
-## 5. Prerequisites
+## 6. Prerequisites
 
 - Node.js 20+
 - npm 10+
 - PostgreSQL
 
-## 6. Environment Setup
+## 7. Environment Setup
 
 ### Backend env
 Create `finance-backend/.env` with values based on `finance-backend/.env.example`.
@@ -91,7 +100,7 @@ Required key:
 Current local default in this workspace:
 - `VITE_API_BASE_URL=http://localhost:5001/api/v1`
 
-## 7. Installation and Run
+## 8. Installation and Run
 
 ### Backend
 ```bash
@@ -119,7 +128,7 @@ cd ../finance-frontend
 npm run build
 ```
 
-## 8. Database and Seed Data
+## 9. Database and Seed Data
 
 The schema contains two main tables:
 - `users`
@@ -144,7 +153,7 @@ Seed includes:
 - Email: `admin@gmail.com`
 - Password: `admintester1234`
 
-## 9. API Overview
+## 10. API Overview
 
 Base URL:
 - `http://localhost:5001/api/v1`
@@ -173,7 +182,7 @@ Base URL:
 - `GET /dashboard/trends?year=YYYY`
 - `GET /dashboard/recent?limit=N`
 
-## 10. Record Listing Features
+## 11. Record Listing Features
 
 `GET /records` supports:
 - Pagination: `page`, `limit`
@@ -182,7 +191,7 @@ Base URL:
 - Filtering by category: `category=<value>`
 - Date range: `startDate`, `endDate`
 
-## 11. Validation and Error Handling
+## 12. Validation and Error Handling
 
 The backend includes:
 - Request body validation with Zod
