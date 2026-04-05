@@ -33,16 +33,18 @@ export function AppLayout() {
             >
               Dashboard
             </NavLink>
-            <NavLink
-              to="/records"
-              className={({ isActive }) =>
-                `rounded-xl px-3 py-2 text-sm font-semibold transition ${
-                  isActive ? 'bg-white text-brand-700' : 'bg-white/10 text-white hover:bg-white/20'
-                }`
-              }
-            >
-              Records
-            </NavLink>
+            {user?.role === 'ADMIN' && (
+              <NavLink
+                to="/records"
+                className={({ isActive }) =>
+                  `rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                    isActive ? 'bg-white text-brand-700' : 'bg-white/10 text-white hover:bg-white/20'
+                  }`
+                }
+              >
+                Records
+              </NavLink>
+            )}
             {user?.role === 'ADMIN' && (
               <NavLink
                 to="/users"

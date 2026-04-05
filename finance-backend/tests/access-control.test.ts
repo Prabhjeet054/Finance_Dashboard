@@ -51,24 +51,22 @@ describe('Access Control - Role-Based Permissions', () => {
 		});
 
 		describe('GET /api/v1/records', () => {
-			it('VIEWER can view records', async () => {
+			it('VIEWER cannot view records (403)', async () => {
 				const response = await request(app)
 					.get('/api/v1/records')
 					.set('Authorization', `Bearer ${viewerToken}`);
 
-				expect(response.status).toBe(200);
-				expect(response.body.success).toBe(true);
-				expect(response.body.data).toHaveProperty('items');
-				expect(response.body.data).toHaveProperty('meta');
+				expect(response.status).toBe(403);
+				expect(response.body.success).toBe(false);
 			});
 
-			it('ANALYST can view records', async () => {
+			it('ANALYST cannot view records (403)', async () => {
 				const response = await request(app)
 					.get('/api/v1/records')
 					.set('Authorization', `Bearer ${analystToken}`);
 
-				expect(response.status).toBe(200);
-				expect(response.body.success).toBe(true);
+				expect(response.status).toBe(403);
+				expect(response.body.success).toBe(false);
 			});
 
 			it('ADMIN can view records', async () => {
@@ -98,7 +96,7 @@ describe('Access Control - Role-Based Permissions', () => {
 				expect(response.body.message).toContain('insufficient permissions');
 			});
 
-			it('ANALYST can create records (201)', async () => {
+			it('ANALYST cannot create records (403)', async () => {
 				const response = await request(app)
 					.post('/api/v1/records')
 					.set('Authorization', `Bearer ${analystToken}`)
@@ -109,10 +107,8 @@ describe('Access Control - Role-Based Permissions', () => {
 						date: new Date(),
 					});
 
-				expect(response.status).toBe(201);
-				expect(response.body.success).toBe(true);
-				expect(response.body.data).toHaveProperty('id');
-				expect(response.body.data).toHaveProperty('slug');
+				expect(response.status).toBe(403);
+				expect(response.body.success).toBe(false);
 			});
 
 			it('ADMIN can create records (201)', async () => {
@@ -174,15 +170,25 @@ describe('Access Control - Role-Based Permissions', () => {
 				expect(response.body.success).toBe(false);
 			});
 
-			it('ANALYST can update records (200)', async () => {
+			it('ANALYST cannot update records (403)', async () => {
 				const response = await request(app)
 					.patch(`/api/v1/records/${analystRecordSlug}`)
 					.set('Authorization', `Bearer ${analystToken}`)
 					.send({ category: 'Analyst Updated Category' });
 
+				expect(response.status).toBe(403);
+				expect(response.body.success).toBe(false);
+			});
+
+			it('ADMIN can update records (200)', async () => {
+				const response = await request(app)
+					.patch(`/api/v1/records/${analystRecordSlug}`)
+					.set('Authorization', `Bearer ${adminToken}`)
+					.send({ category: 'Admin Updated Category' });
+
 				expect(response.status).toBe(200);
 				expect(response.body.success).toBe(true);
-				expect(response.body.data.category).toBe('Analyst Updated Category');
+				expect(response.body.data.category).toBe('Admin Updated Category');
 			});
 		});
 	});

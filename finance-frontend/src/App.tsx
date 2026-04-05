@@ -17,7 +17,10 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/records" element={<RecordsPage />} />
+
+              <Route element={<ProtectedRoute roles={['ADMIN']} />}>
+                <Route path="/records" element={<RecordsPage />} />
+              </Route>
 
               <Route element={<ProtectedRoute roles={['ADMIN']} />}>
                 <Route path="/users" element={<UsersPage />} />

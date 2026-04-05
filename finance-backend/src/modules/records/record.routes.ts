@@ -10,10 +10,10 @@ const router = Router();
 
 router.use(authMiddleware);
 
-router.get('/', requireRole(Role.ADMIN, Role.ANALYST, Role.VIEWER), validateQuery(filterRecordSchema), recordController.getAll);
-router.get('/:slug', requireRole(Role.ADMIN, Role.ANALYST, Role.VIEWER), validateParams(recordSlugParamSchema), recordController.getBySlug);
-router.post('/', requireRole(Role.ADMIN, Role.ANALYST), validate(createRecordSchema), recordController.create);
-router.patch('/:slug', requireRole(Role.ADMIN, Role.ANALYST), validateParams(recordSlugParamSchema), validate(updateRecordSchema), recordController.update);
+router.get('/', requireRole(Role.ADMIN), validateQuery(filterRecordSchema), recordController.getAll);
+router.get('/:slug', requireRole(Role.ADMIN), validateParams(recordSlugParamSchema), recordController.getBySlug);
+router.post('/', requireRole(Role.ADMIN), validate(createRecordSchema), recordController.create);
+router.patch('/:slug', requireRole(Role.ADMIN), validateParams(recordSlugParamSchema), validate(updateRecordSchema), recordController.update);
 router.delete('/:slug', requireRole(Role.ADMIN), validateParams(recordSlugParamSchema), recordController.softDelete);
 
 export default router;

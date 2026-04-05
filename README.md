@@ -22,17 +22,15 @@ It includes:
 ## 3. Roles and Access Model
 
 ### Viewer
-- Can view records
 - Can view recent dashboard activity
-- Cannot create, update, or delete records
+- Cannot access records endpoints
 - Cannot access summary, categories, or trends analytics
 - Cannot manage users
 
 ### Analyst
-- Can view records
-- Can create and update records
-- Cannot delete records
 - Can access summary, categories, trends, and recent analytics
+- Can access insight focused dashboard data only
+- Cannot access records CRUD endpoints
 - Cannot manage users
 
 ### Admin
@@ -162,7 +160,7 @@ Base URL:
 - `PATCH /users/:slug`
 - `DELETE /users/:slug` (deactivate)
 
-### Records
+### Records (admin only)
 - `GET /records`
 - `GET /records/:slug`
 - `POST /records`
@@ -238,9 +236,9 @@ Common response shape:
 2. Frontend points to backend API base URL
 3. Seed completes without errors
 4. Admin can login with seeded credentials
-5. Viewer cannot create or modify records
-6. Analyst can create and update records but cannot delete
-7. Admin can manage users and delete records
+5. Viewer cannot access records endpoints
+6. Analyst cannot access records endpoints and can access dashboard insights
+7. Admin can perform full records CRUD and manage users
 8. Records list supports pagination, search, and filters
 9. Deleted records are not returned in active listings
 10. Rate limiting returns throttling behavior under burst traffic

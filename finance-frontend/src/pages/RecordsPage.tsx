@@ -41,7 +41,7 @@ export function RecordsPage() {
     date: '',
   });
 
-  const canManageRecords = user?.role === 'ADMIN' || user?.role === 'ANALYST';
+  const canManageRecords = user?.role === 'ADMIN';
 
   useEffect(() => {
     void fetchRecords();
