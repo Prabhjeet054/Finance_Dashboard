@@ -2,7 +2,25 @@ import type { ApiResponse } from '../types';
 
 const defaultApiBaseUrl = import.meta.env.DEV ? 'http://localhost:5000/api/v1' : '/api/v1';
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || defaultApiBaseUrl;
+function normalizeApiBaseUrl(baseUrl: string): string {
+  const trimmed = baseUrl.trim().replace(/\/+$/, '');
+
+  if (!trimmed) {
+    return '/api/v1';
+  }
+
+  return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
+}
+
+function normalizeRequestPath(path: string): string {
+  if (!path.startsWith('/')) {
+    return `/${path}`;
+  }
+
+  return path;
+}
+
+export const API_BASE_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_BASE_URL || defaultApiBaseUrl);
 
 export async function apiRequest<T>(
   path: string,
@@ -18,7 +36,9 @@ export async function apiRequest<T>(
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const normalizedPath = normalizeRequestPath(path);
+
+  const response = await fetch(`${API_BASE_URL}${normalizedPath}`, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
