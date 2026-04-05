@@ -1,8 +1,19 @@
 
 node_modules/
 dist/
+coverage/
+
+# Environment files
 .env
+.env.*
+!.env.example
+
+# Databases
 *.db
 *.db-journal
+
+# Prisma
 prisma/migrations/
-EOF
+
+# TypeScript
+*.tsbuildinfo
