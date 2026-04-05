@@ -35,6 +35,7 @@ export const updateRecordSchema = z
 
 export const filterRecordSchema = z
 	.object({
+		search: z.string().trim().min(1).max(100).optional(),
 		type: z.nativeEnum(RecordType).optional(),
 		category: z.string().trim().max(100).optional(),
 		startDate: isoDateString.optional(),

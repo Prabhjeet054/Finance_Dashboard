@@ -15,6 +15,7 @@ export function RecordsPage() {
   const [info, setInfo] = useState('');
 
   const [recordFilters, setRecordFilters] = useState({
+    search: '',
     type: '',
     category: '',
     startDate: '',
@@ -50,6 +51,7 @@ export function RecordsPage() {
   async function fetchRecords(): Promise<void> {
     setError('');
     const params = new URLSearchParams();
+    if (recordFilters.search) params.set('search', recordFilters.search);
     if (recordFilters.type) params.set('type', recordFilters.type);
     if (recordFilters.category) params.set('category', recordFilters.category);
     if (recordFilters.startDate) params.set('startDate', recordFilters.startDate);
@@ -128,7 +130,13 @@ export function RecordsPage() {
         {error && <p className="mb-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
         {info && <p className="mb-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{info}</p>}
 
-        <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
+          <input
+            placeholder="Search (category, notes, slug)"
+            value={recordFilters.search}
+            onChange={(e) => setRecordFilters((p) => ({ ...p, search: e.target.value, page: 1 }))}
+            className="rounded-xl border border-slate-300 px-3 py-2"
+          />
           <input
             placeholder="Category"
             value={recordFilters.category}

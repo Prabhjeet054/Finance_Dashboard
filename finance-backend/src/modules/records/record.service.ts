@@ -110,6 +110,16 @@ export async function softDelete(slug: string, userId: string, role: Role): Prom
 
 function buildFilterWhere(filters: FilterRecordInput, userId: string, role: Role): Prisma.FinancialRecordWhereInput {
 	const accessWhere = buildAccessWhere(userId, role);
+	const search = filters.search?.trim();
+	const searchWhere: Prisma.FinancialRecordWhereInput | undefined = search
+		? {
+				OR: [
+					{ category: { contains: search, mode: 'insensitive' } },
+					{ notes: { contains: search, mode: 'insensitive' } },
+					{ slug: { contains: search, mode: 'insensitive' } },
+				],
+			}
+		: undefined;
 	const dateWhere: Prisma.DateTimeFilter | undefined =
 		filters.startDate || filters.endDate
 			? {
@@ -121,6 +131,7 @@ function buildFilterWhere(filters: FilterRecordInput, userId: string, role: Role
 	return {
 		isDeleted: false,
 		...accessWhere,
+		...(searchWhere ?? {}),
 		...(filters.type ? { type: filters.type } : {}),
 		...(filters.category ? { category: filters.category } : {}),
 		...(dateWhere ? { date: dateWhere } : {}),
