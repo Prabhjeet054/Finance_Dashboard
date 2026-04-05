@@ -12,6 +12,7 @@ describe('Access Control - Role-Based Permissions', () => {
 	let adminId: string;
 	let adminToken: string;
 	let analystRecordSlug: string;
+	let viewerRecordSlug: string;
 
 	beforeAll(async () => {
 		await resetDatabase();
@@ -32,6 +33,9 @@ describe('Access Control - Role-Based Permissions', () => {
 		// Seed a record for testing
 		const record = await seedRecord(analystId, 5000, 'INCOME', 'Salary');
 		analystRecordSlug = record.slug;
+
+		const viewerRecord = await seedRecord(viewerId, 900, 'EXPENSE', 'Viewer Seed Record');
+		viewerRecordSlug = viewerRecord.slug;
 	});
 
 	afterAll(async () => {
@@ -158,6 +162,29 @@ describe('Access Control - Role-Based Permissions', () => {
 				expect(response.body.success).toBe(true);
 			});
 		});
+
+		describe('PATCH /api/v1/records/:slug', () => {
+			it('VIEWER cannot update records (403)', async () => {
+				const response = await request(app)
+					.patch(`/api/v1/records/${viewerRecordSlug}`)
+					.set('Authorization', `Bearer ${viewerToken}`)
+					.send({ category: 'Viewer Edit Attempt' });
+
+				expect(response.status).toBe(403);
+				expect(response.body.success).toBe(false);
+			});
+
+			it('ANALYST can update records (200)', async () => {
+				const response = await request(app)
+					.patch(`/api/v1/records/${analystRecordSlug}`)
+					.set('Authorization', `Bearer ${analystToken}`)
+					.send({ category: 'Analyst Updated Category' });
+
+				expect(response.status).toBe(200);
+				expect(response.body.success).toBe(true);
+				expect(response.body.data.category).toBe('Analyst Updated Category');
+			});
+		});
 	});
 
 	describe('Dashboard Endpoint Access Control', () => {
@@ -276,6 +303,115 @@ describe('Access Control - Role-Based Permissions', () => {
 				expect(response.status).toBe(200);
 				expect(response.body.success).toBe(true);
 				expect(response.body.data.length).toBeLessThanOrEqual(5);
+			});
+		});
+	});
+
+	describe('Users Endpoint Access Control', () => {
+		describe('GET /api/v1/users', () => {
+			it('VIEWER cannot list users (403)', async () => {
+				const response = await request(app)
+					.get('/api/v1/users')
+					.set('Authorization', `Bearer ${viewerToken}`);
+
+				expect(response.status).toBe(403);
+				expect(response.body.success).toBe(false);
+			});
+
+			it('ANALYST cannot list users (403)', async () => {
+				const response = await request(app)
+					.get('/api/v1/users')
+					.set('Authorization', `Bearer ${analystToken}`);
+
+				expect(response.status).toBe(403);
+				expect(response.body.success).toBe(false);
+			});
+
+			it('ADMIN can list users (200)', async () => {
+				const response = await request(app)
+					.get('/api/v1/users')
+					.set('Authorization', `Bearer ${adminToken}`);
+
+				expect(response.status).toBe(200);
+				expect(response.body.success).toBe(true);
+				expect(Array.isArray(response.body.data.items)).toBe(true);
+			});
+		});
+
+		describe('POST /api/v1/users', () => {
+			it('VIEWER cannot create users (403)', async () => {
+				const response = await request(app)
+					.post('/api/v1/users')
+					.set('Authorization', `Bearer ${viewerToken}`)
+					.send({
+						name: 'Blocked Viewer Create',
+						email: 'blocked.viewer@example.com',
+						password: 'ViewerPass123',
+						role: 'VIEWER',
+					});
+
+				expect(response.status).toBe(403);
+				expect(response.body.success).toBe(false);
+			});
+
+			it('ANALYST cannot create users (403)', async () => {
+				const response = await request(app)
+					.post('/api/v1/users')
+					.set('Authorization', `Bearer ${analystToken}`)
+					.send({
+						name: 'Blocked Analyst Create',
+						email: 'blocked.analyst@example.com',
+						password: 'AnalystPass123',
+						role: 'ANALYST',
+					});
+
+				expect(response.status).toBe(403);
+				expect(response.body.success).toBe(false);
+			});
+
+			it('ADMIN can create VIEWER and ANALYST users (201)', async () => {
+				const viewerCreate = await request(app)
+					.post('/api/v1/users')
+					.set('Authorization', `Bearer ${adminToken}`)
+					.send({
+						name: 'Managed Viewer',
+						email: 'managed.viewer@example.com',
+						password: 'ViewerPass123',
+						role: 'VIEWER',
+					});
+
+				expect(viewerCreate.status).toBe(201);
+				expect(viewerCreate.body.success).toBe(true);
+				expect(viewerCreate.body.data.role).toBe('VIEWER');
+
+				const analystCreate = await request(app)
+					.post('/api/v1/users')
+					.set('Authorization', `Bearer ${adminToken}`)
+					.send({
+						name: 'Managed Analyst',
+						email: 'managed.analyst@example.com',
+						password: 'AnalystPass123',
+						role: 'ANALYST',
+					});
+
+				expect(analystCreate.status).toBe(201);
+				expect(analystCreate.body.success).toBe(true);
+				expect(analystCreate.body.data.role).toBe('ANALYST');
+			});
+
+			it('ADMIN cannot create ADMIN users via user-management API (422)', async () => {
+				const response = await request(app)
+					.post('/api/v1/users')
+					.set('Authorization', `Bearer ${adminToken}`)
+					.send({
+						name: 'Blocked Admin Role',
+						email: 'blocked.admin.role@example.com',
+						password: 'AdminPass123',
+						role: 'ADMIN',
+					});
+
+				expect(response.status).toBe(422);
+				expect(response.body.success).toBe(false);
 			});
 		});
 	});
