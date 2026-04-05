@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
-    "start": "prisma db push && node dist/src/server.js",
+    "start": "node dist/src/server.js",
+    "start:with-db-push": "prisma db push && node dist/src/server.js",
     "postinstall": "prisma generate && npm run build",
     "test": "jest",
     "test:watch": "jest --watch",
