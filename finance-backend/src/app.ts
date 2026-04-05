@@ -55,6 +55,14 @@ app.use(
 );
 app.use(morgan('dev'));
 
+app.get('/health', (_req, res) => {
+	res.status(200).json({
+		success: true,
+		message: 'OK',
+		timestamp: new Date().toISOString(),
+	});
+});
+
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/records', recordRoutes);
